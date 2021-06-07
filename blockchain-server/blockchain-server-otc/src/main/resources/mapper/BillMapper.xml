@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.BillMapper">
+
+    <sql id="table">otc_bill</sql>
+
+    <resultMap id="BillMap" type="com.blockchain.server.otc.entity.Bill">
+        <id property="id" column="id"/>
+        <result property="freeBalance" column="freebalance"/>
+        <result property="freezeBalance" column="freezebalance"/>
+        <result property="createTime" column="create_time"/>
+        <result property="billType" column="bill_type"/>
+        <result property="userId" column="user_id"/>
+        <result property="recordNumber" column="record_number"/>
+        <result property="coinName" column="coin_name"/>
+    </resultMap>
+
+    <resultMap id="BillDTOMap" type="com.blockchain.server.otc.dto.bill.ListBillResultDTO">
+        <id property="id" column="id"/>
+        <result property="freeBalance" column="freebalance"/>
+        <result property="freezeBalance" column="freezebalance"/>
+        <result property="createTime" column="create_time"/>
+        <result property="billType" column="bill_type"/>
+        <result property="userId" column="user_id"/>
+        <result property="recordNumber" column="record_number"/>
+        <result property="coinName" column="coin_name"/>
+    </resultMap>
+
+    <select id="listBill" resultMap="BillDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,6 @@
+getuipush:
+  appId: gPN3ev2q2fAO4WALRZhEe8
+  appKey: 4xCVdxnZ7U6GVpLGffnit
+  masterSecret: TaL7USuCTo8FQ1G2W4FHm8
+  host: http://sdk.open.api.igexin.com/apiex.htm
+  open: true

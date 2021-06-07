@@ -1,0 +1,4 @@
+jwt:
+  secret: YWJjMTIz
+  expiration: 2000
+  header: token

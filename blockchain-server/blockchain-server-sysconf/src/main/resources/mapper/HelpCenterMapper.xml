@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.HelpCenterMapper">
+
+    <resultMap type="com.blockchain.server.sysconf.entity.HelpCenter" id="HelpCenterResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="url"    column="url"    />
+        <result property="rank"    column="rank"    />
+        <result property="userLocal"    column="user_local"    />
+        <result property="showStatus"    column="show_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="modifyTime"    column="modify_time"    />
+    </resultMap>
+
+	<sql id="selectHelpCenterVo">
+        select id, title, content, url, rank, user_local, show_status, create_time, modify_time from conf_help_center
+    </sql>
+
+    <select id="selectHelpCenterList" parameterType="com.blockchain.server.sysconf.entity.HelpCenter" resultMap="HelpCenterResult">
+        select id, title, url, rank, user_local, show_status, create_time, modify_time
+        from conf_help_center
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+             <if test="title != null and title != ''"> and title = #{title}</if>
+             <if test="content != null and content != ''"> and content = #{content}</if>
+             <if test="url != null and url != ''"> and url = #{url}</if>
+             <if test="userLocal != null and userLocal != ''"> and user_local = #{userLocal}</if>
+             <if test="showStatus != null "> and show_status = #{showStatus}</if>
+             <if test="rank != null "> and rank = #{rank}</if>
+             <if test="createTime != null and createTime != ''"> and create_time = #{createTime}</if>
+             <if test="modifyTime != null and modifyTime != ''"> and modify_time = #{modifyTime}</if>
+        </where>
+        ORDER BY rank DESC,create_time DESC
+    </select>
+
+    <select id="selectHelpCenterById" parameterType="String" resultMap="HelpCenterResult">
+        <include refid="selectHelpCenterVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHelpCenter" parameterType="com.blockchain.server.sysconf.entity.HelpCenter">
+        insert into conf_help_center
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			id,
+			<if test="title != null and title != '' ">title,</if>
+			<if test="content != null and content != '' ">content,</if>
+			<if test="url != null and url != '' ">url,</if>
+			<if test="userLocal != null and userLocal != '' ">user_local,</if>
+			<if test="showStatus != null">show_status,</if>
+			<if test="rank != null">rank,</if>
+			<if test="createTime != null and createTime != '' ">create_time,</if>
+			<if test="modifyTime != null and modifyTime != '' ">modify_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			UUID()
+			<if test="title != null and title != ''">#{title},</if>
+			<if test="content != null and content != ''">#{content},</if>
+			<if test="url != null and url != ''">#{url},</if>
+			<if test="userLocal != null and userLocal != ''">#{userLocal},</if>
+			<if test="showStatus != null">#{showStatus},</if>
+			<if test="rank != null">#{rank},</if>
+			<if test="createTime != null and createTime != ''">#{createTime},</if>
+			<if test="modifyTime != null and modifyTime != ''">#{modifyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHelpCenter" parameterType="com.blockchain.server.sysconf.entity.HelpCenter">
+        update conf_help_center
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''  ">title = #{title},</if>
+            <if test="content != null  and content != ''  ">content = #{content},</if>
+            <if test="url != null  and url != ''  ">url = #{url},</if>
+            <if test="userLocal != null  and userLocal != ''  ">user_local = #{userLocal},</if>
+            <if test="showStatus != null  ">show_status = #{showStatus},</if>
+            <if test="rank != null  ">rank = #{rank},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="modifyTime != null  ">modify_time = #{modifyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteHelpCenterById" parameterType="String">
+        delete from conf_help_center where id = #{id}
+    </delete>
+
+    <delete id="deleteHelpCenterByIds" parameterType="String">
+        delete from conf_help_center where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectHelpCenterForApp" resultMap="HelpCenterResult">
+        select id, title, url
+        from conf_help_center
+        where show_status = #{showStatus}
+        <if test="userLocal != null and userLocal != ''">
+            and user_local = #{userLocal}
+        </if>
+        ORDER BY rank DESC,create_time DESC
+    </select>
+
+    <select id="selectContentById" resultType="String">
+        select content
+        from conf_help_center
+        where id = #{id}
+    </select>
+
+</mapper>

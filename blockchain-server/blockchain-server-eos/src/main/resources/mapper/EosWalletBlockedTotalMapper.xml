@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.eos.mapper.EosWalletBlockedTotalMapper">
+    <resultMap id="BaseMap" type="com.blockchain.server.eos.entity.EosWalletBlockedTotal">
+        <result column="id" property="id"/>
+        <result column="wallet_uid" property="walletUid"/>
+        <result column="token_symbol" property="tokenSymbol"/>
+        <result column="user_open_id" property="userOpenId"/>
+        <result column="blocked_total" property="blockedTotal"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+    <sql id="tableName">dapp_eos_wallet_blocked_total</sql>
+
+    <update id="updateTotalByIdInRowLock">
+        UPDATE
+        <include refid="tableName"/>
+        SET
+        blocked_total = blocked_total + #{optNumber}
+        WHERE
+        id = #{id}
+        AND blocked_total + #{optNumber} &gt;= 0
+    </update>
+</mapper>

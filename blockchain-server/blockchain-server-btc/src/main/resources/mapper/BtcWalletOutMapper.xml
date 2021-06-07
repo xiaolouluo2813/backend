@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.btc.mapper.BtcWalletOutMapper">
+	<resultMap id="BtcWalletOutMap" type="com.blockchain.server.btc.dto.BtcWalletOutDTO">
+		<result property="id" column="id"/>
+		<result property="addr" column="addr"/>
+		<result property="tokenSymbol" column="token_symbol"/>
+		<result property="remark" column="remark"/>
+	</resultMap>
+
+	<sql id="tableName">dapp_btc_wallet_out</sql>
+
+	<select id="listByTokenSymbol" resultMap="BtcWalletOutMap">
+		SELECT id,addr,token_symbol,remark
+		FROM
+		<include refid="tableName"/>
+		<where>
+			<if test="tokenSymbol != null">
+				AND token_symbol = #{tokenSymbol}
+			</if>
+		</where>
+	</select>
+</mapper>

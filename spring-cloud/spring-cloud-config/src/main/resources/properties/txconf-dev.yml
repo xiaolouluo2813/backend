@@ -1,0 +1,4 @@
+#分布式事务配置
+tm:
+  manager:
+    url: http://127.0.0.1:9000/tx/manager/

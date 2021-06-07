@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.WgtVersionMapper">
+
+    <sql id="tableName">conf_wgt_version</sql>
+
+    <resultMap type="com.blockchain.server.sysconf.entity.WgtVersion" id="WgtVersionResult">
+        <id     property="id"       column="id"      />
+        <result property="wgtVersion"      column="wgt_version"/>
+        <result property="wgtUrl"    column="wgt_url"   />
+        <result property="remark"   column="remark"  />
+        <result property="createTime"   column="create_time"  />
+        <result property="modifyTime"   column="modify_time"  />
+    </resultMap>
+
+    <select id="findNewWgtVersion" parameterType="java.lang.String" resultMap="WgtVersionResult">
+        SELECT * FROM <include refid="tableName"/> ORDER BY create_time DESC LIMIT 1
+    </select>
+
+    <delete id="deleteWgtVersionById" parameterType="java.lang.String">
+        delete from <include refid="tableName"/> where id = #{id}
+    </delete>
+
+    <select id="listAll" parameterType="java.lang.String" resultMap="WgtVersionResult">
+        SELECT * FROM <include refid="tableName"/>
+    </select>
+
+    <select id="findWgtVersionById" parameterType="java.lang.String" resultMap="WgtVersionResult">
+        SELECT * FROM <include refid="tableName"/> WHERE id=#{id}
+    </select>
+
+    <select id="selectWgtVersionList" parameterType="com.blockchain.server.sysconf.entity.WgtVersion" resultMap="WgtVersionResult">
+        SELECT * FROM <include refid="tableName"/>
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+            <if test="wgtVersion != null and wgtVersion != ''"> and version = #{wgtVersion}</if>
+            <if test="wgtUrl != null and wgtUrl != ''"> and wgt_url = #{wgtUrl}</if>
+            <if test="remark != null and remark != ''"> and remark = #{remark}</if>
+            <if test="createTime != null and createTime != ''"> and create_time = #{createTime}</if>
+            <if test="modifyTime != null and modifyTime != ''"> and modify_time = #{modifyTime}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+
+</mapper>

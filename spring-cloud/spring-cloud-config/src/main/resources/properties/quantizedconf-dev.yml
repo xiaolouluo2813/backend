@@ -1,0 +1,3 @@
+quantized:
+  app-addUrl: http://exchange:8129/tradingOn/addSubscribe
+  app-unUrl: http://exchange:8129/tradingOn/unSubscribe

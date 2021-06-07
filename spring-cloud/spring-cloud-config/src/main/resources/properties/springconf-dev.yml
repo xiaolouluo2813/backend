@@ -1,0 +1,20 @@
+#spring 配置信息
+spring:
+  jackson:
+    #格式化后台返回时间
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      fail-on-empty-beans: false
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+  http:
+    encoding:
+      charset: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+server:
+  tomcat:
+    max-http-post-size: -1

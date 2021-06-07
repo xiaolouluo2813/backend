@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.system.mapper.SystemMenuMapper">
+    <resultMap id="systemMenuMap" type="com.blockchain.server.system.dto.SystemMenuResultDto">
+        <id property="id" column="id"/>
+        <result property="label" column="name"/>
+        <result property="code" column="code"/>
+        <result property="url" column="url"/>
+        <result property="type" column="type"/>
+        <result property="icon" column="icon"/>
+        <result property="ranking" column="ranking"/>
+    </resultMap>
+    <resultMap id="userMenuMap" type="com.blockchain.server.system.dto.UserMenuDto">
+        <id property="id" column="id"/>
+        <result property="pid" column="pid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="icon" column="icon"/>
+    </resultMap>
+    <sql id="tableName">pc_auth_system_menu</sql>
+    <sql id="roleMenuTableName">pc_auth_system_role_menu</sql>
+
+    <select id="systeMenuListByStatusAndTypeAndPid" resultMap="systemMenuMap">
+        SELECT id,name,code,url,type,icon,ranking
+        FROM
+        <include refid="tableName"/>
+        where status = #{status}
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="pid != null">
+            AND pid = #{pid}
+        </if>
+        ORDER BY ranking
+    </select>
+
+    <select id="roleMenuList" resultMap="systemMenuMap">
+        SELECT DISTINCT pc_auth_system_menu.id,name,code,url,type,icon,ranking
+        FROM
+        pc_auth_system_menu
+        INNER JOIN
+        pc_auth_system_role_menu
+        ON pc_auth_system_menu.id = menu_id
+        WHERE role_id IN
+        <if test="roleIds != null">
+            <foreach collection="roleIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY ranking
+    </select>
+
+    <select id="userMenuListAll" resultMap="userMenuMap">
+        SELECT DISTINCT pc_auth_system_menu.id,pc_auth_system_menu.name,pid,code,`type`,icon,rank,ranking
+        FROM
+        pc_auth_system_menu
+        LEFT JOIN
+        ( SELECT id,ranking rank FROM pc_auth_system_menu WHERE type = 'M' ORDER BY ranking ) m
+        ON pc_auth_system_menu.pid = m.id
+        INNER JOIN
+        pc_auth_system_role_menu
+        ON pc_auth_system_menu.id = menu_id
+        INNER JOIN
+        pc_auth_system_user_role
+        ON pc_auth_system_role_menu.role_id = pc_auth_system_user_role.role_id
+        WHERE pc_auth_system_menu.status = "Y" AND pc_auth_system_user_role.user_id = #{userId}
+        ORDER BY  rank, ranking
+    </select>
+
+    <select id="menuListByRoleId" resultType="java.lang.String">
+        SELECT DISTINCT m.id
+        FROM
+        pc_auth_system_menu m
+        LEFT JOIN
+        pc_auth_system_role_menu r
+        ON m.id = r.menu_id
+        WHERE role_id = #{id} AND m.type = "F"
+    </select>
+
+</mapper>

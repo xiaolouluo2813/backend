@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.eos.mapper.WalletMapper">
+    <resultMap id="walletMap" type="com.blockchain.server.eos.dto.WalletDTO">
+        <result property="id" column="id"/>
+        <result property="tokenName" column="token_name"/>
+        <result property="userOpenId" column="user_open_id"/>
+        <result property="tokenSymbol" column="token_symbol"/>
+        <result property="balance" column="balance"/>
+        <result property="freeBalance" column="free_balance"/>
+        <result property="freezeBalance" column="freeze_balance"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="walletType" column="wallet_type"/>
+
+    </resultMap>
+    <resultMap id="WalletBaseDTO" type="com.blockchain.common.base.dto.wallet.WalletBaseDTO">
+        <result property="userId" column="user_open_id"/>
+        <result property="addr" column="id"/>
+        <result property="coinMain" column="token_main"/>
+        <result property="coinType" column="token_name"/>
+        <result property="coinName" column="token_symbol"/>
+        <result property="balance" column="balance"/>
+        <result property="freeBalance" column="free_balance"/>
+        <result property="freezeBalance" column="freeze_balance"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_eos_wallet</sql>
+    <sql id="timeDesc"> ORDER BY create_time DESC </sql>
+    <sql id="tableWhere">
+        <where>
+            <if test="params.userId != null and params.userId != '' ">AND user_open_id =#{params.userId}</if>
+            <if test="params.coinType != null and params.coinType != '' ">AND token_name = #{params.coinType}</if>
+            <if test="params.coinName != null and params.coinName != '' ">AND token_symbol = #{params.coinName}</if>
+            <if test="params.walletType != null and params.walletType != '' ">AND wallet_type = #{params.walletType}</if>
+
+            <if test="params.startDate != null and params.startDate != ''">AND DATE_FORMAT(create_time,'%Y-%m-%d')
+                >= DATE_FORMAT(#{params.startDate},'%Y-%m-%d')
+            </if>
+            <if test="params.endDate != null and params.endDate != ''">AND DATE_FORMAT(create_time,'%Y-%m-%d')
+                &lt;= DATE_FORMAT(#{params.endDate},'%Y-%m-%d')
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectQuery" resultMap="WalletBaseDTO">
+        SELECT
+        *,
+        'EOS' AS token_main
+        FROM
+        <include refid="tableName"/>
+        <include refid="tableWhere"/>
+        <include refid="timeDesc"/>
+    </select>
+    <sql id="selectEthWalletVo">
+        SELECT
+        user_open_id,
+        token_symbol,
+        CONCAT(balance) as balance,
+        create_time,
+--         token_decimals,
+        wallet_type,
+        update_time,
+        CONCAT(free_balance) as free_balance,
+        id,
+        token_name,
+        CONCAT(freeze_balance) as freeze_balance
+        FROM
+        <include refid="tableName"/>
+    </sql>
+
+    <select id="selectByAddrAndTokenName" resultMap="walletMap">
+        <include refid="selectEthWalletVo"/>
+        WHERE
+        id = #{id}
+        and token_name = #{tokenName}
+    </select>
+
+    <select id="selectByAddrAndTokenNameAndWalletType" resultMap="walletMap">
+        <include refid="selectEthWalletVo"/>
+        WHERE
+        id = #{id}
+        and token_name = #{tokenName}
+        and wallet_type = #{walletType}
+    </select>
+
+    <select id="selectByUserOpenIdAndTokenNameAndWalletType" resultMap="walletMap">
+        <include refid="selectEthWalletVo"/>
+        WHERE
+        user_open_id = #{userOpenId}
+        and token_name = #{tokenName}
+        and wallet_type = #{walletType}
+    </select>
+
+    <select id="selectByAddrAndWalletType" resultMap="walletMap">
+        <include refid="selectEthWalletVo"/>
+        WHERE
+        id = #{id}
+        and wallet_type = #{walletType}
+    </select>
+
+    <select id="selectByUserOpenIdAndWalletType" resultMap="walletMap">
+        <include refid="selectEthWalletVo"/>
+        WHERE
+        user_open_id = #{userOpenId}
+        and wallet_type = #{walletType}
+    </select>
+
+    <update id="updateBalanceByUserIdInRowLock">
+        UPDATE
+        <include refid="tableName"/>
+        wallet
+        SET
+        wallet.balance = wallet.balance + #{balance},
+        wallet.free_balance = wallet.free_balance + #{freeBalance},
+        wallet.freeze_balance = wallet.freeze_balance + #{freezeBalance},
+        wallet.update_time = #{updateTime}
+        WHERE
+        user_open_id = #{userOpenId}
+        AND token_name = #{tokenName}
+        AND wallet_type = #{walletType}
+        AND wallet.balance + #{balance} >= 0
+        AND wallet.free_balance + #{freeBalance} >= 0
+        AND wallet.freeze_balance + #{freezeBalance} >= 0
+    </update>
+
+    <update id="updateBalanceByAddrInRowLock">
+        UPDATE
+        <include refid="tableName"/>
+        wallet
+        SET
+        wallet.balance = wallet.balance + #{balance},
+        wallet.free_balance = wallet.free_balance + #{freeBalance},
+        wallet.freeze_balance = wallet.freeze_balance + #{freezeBalance},
+        wallet.update_time = #{updateTime}
+        WHERE
+        id = #{id}
+        AND token_name = #{tokenName}
+        AND wallet_type = #{walletType}
+        AND wallet.balance + #{balance} >= 0
+        AND wallet.free_balance + #{freeBalance} >= 0
+        AND wallet.freeze_balance + #{freezeBalance} >= 0
+    </update>
+</mapper>

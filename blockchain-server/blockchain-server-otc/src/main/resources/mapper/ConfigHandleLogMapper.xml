@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.ConfigHandleLogMapper">
+
+    <sql id="table">otc_config_handle_log</sql>
+
+    <resultMap id="ConfigHandleLogMap" type="com.blockchain.server.otc.entity.ConfigHandleLog">
+        <id property="id" column="id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="dataKey" column="data_key"/>
+        <result property="afterValue" column="after_value"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="beforeValue" column="before_value"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beforeStatus" column="before_status"/>
+    </resultMap>
+
+    <resultMap id="ConfigHandleLogDTOMap"
+               type="com.blockchain.server.otc.dto.confighandlelog.ListConfigHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="dataKey" column="data_key"/>
+        <result property="afterValue" column="after_value"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="beforeValue" column="before_value"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beforeStatus" column="before_status"/>
+    </resultMap>
+
+    <select id="listConfigHandleLog" resultMap="ConfigHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="dataKey != null and dataKey != ''">
+                data_key = #{dataKey}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

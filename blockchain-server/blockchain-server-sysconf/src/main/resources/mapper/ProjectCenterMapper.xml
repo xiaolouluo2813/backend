@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.ProjectCenterMapper">
+    <sql id="tableName">conf_project_center_info</sql>
+
+    <select id="list" resultType="com.blockchain.server.sysconf.dto.ProjectCenterDto">
+      SELECT cpci.id,cpci.currency_name AS currencyName,
+        cpci.status,cpci.order_by AS orderBy,
+        cpci.issue_time AS issueTime,cpci.total_supply AS totalSupply,
+        cpci.total_circulation AS totalCirculation,cpci.ico_amount AS icoAmount,
+        cpci.white_paper AS whitePaper,cpci.coin_url AS coinUrl,
+        cpci.presentation,cpci.descr,
+        cpci.type,cpci.languages,
+        cpci.uccn,cpci.create_time AS createTime,cpci.classify_id AS classifyId,
+      cpcc.name AS classifyName,cpcs.num AS starNum FROM conf_project_center_info cpci
+      LEFT JOIN conf_project_center_classify cpcc ON cpci.classify_id = cpcc.id
+      LEFT JOIN (
+      SELECT project_id,count(id) AS num
+      FROM conf_project_center_star GROUP BY project_id
+      ) cpcs ON cpcs.project_id = cpci.id
+      <where>
+          <if test="status != null and status != ''"> AND cpci.status = #{status}</if>
+          <if test="currencyName != null and currencyName != ''"> AND cpci.currency_name = #{currencyName}</if>
+      </where>
+      ORDER BY order_by DESC,cpci.create_time DESC
+    </select>
+</mapper>

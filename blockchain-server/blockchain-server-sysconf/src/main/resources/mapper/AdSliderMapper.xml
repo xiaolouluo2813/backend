@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.AdSliderMapper">
+    
+    <resultMap type="com.blockchain.server.sysconf.dto.AdSliderDto" id="AdSliderResult">
+        <result property="id"    column="id"    />
+        <result property="imgPath"    column="img_path"    />
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+	
+	<sql id="selectAdSliderVo">
+        select id, img_path, serial_number, status from conf_ad_slider
+    </sql>
+	
+    <select id="listAdSliderForApp" parameterType="com.blockchain.server.sysconf.dto.AdSliderDto" resultMap="AdSliderResult">
+        select img_path, serial_number from conf_ad_slider
+        where status = 1
+        order by serial_number asc
+    </select>
+
+    <select id="selectAdSliderList" parameterType="com.blockchain.server.sysconf.dto.AdSliderDto" resultMap="AdSliderResult">
+        <include refid="selectAdSliderVo"/>
+        <where>
+             <!--<if test="imgPath != null and imgPath != ''"> and img_path = #{imgPath}</if>-->
+             <!--<if test="serialNumber != null and serialNumber != ''"> and serial_number = #{serialNumber}</if>-->
+             <if test="status != null and status != ''"> and status = #{status}</if>
+        </where>
+        order by status desc, serial_number asc
+    </select>
+
+    <select id="selectAdSliderById" parameterType="Integer" resultMap="AdSliderResult">
+        <include refid="selectAdSliderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAdSlider" parameterType="com.blockchain.server.sysconf.dto.AdSliderDto">
+        insert into conf_ad_slider
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="imgPath != null and imgPath != '' ">img_path,</if>
+			<if test="serialNumber != null and serialNumber != '' ">serial_number,</if>
+			<if test="status != null and status != '' ">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="imgPath != null and imgPath != ''">#{imgPath},</if>
+			<if test="serialNumber != null and serialNumber != ''">#{serialNumber},</if>
+			<if test="status != null and status != ''">#{status},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateAdSlider" parameterType="com.blockchain.server.sysconf.dto.AdSliderDto">
+        update conf_ad_slider
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imgPath != null  and imgPath != ''  ">img_path = #{imgPath},</if>
+            <if test="serialNumber != null  ">serial_number = #{serialNumber},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteAdSliderById" parameterType="Integer">
+        delete from conf_ad_slider where id = #{id}
+    </delete>
+	
+    <delete id="deleteAdSliderByIds" parameterType="String">
+        delete from conf_ad_slider where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

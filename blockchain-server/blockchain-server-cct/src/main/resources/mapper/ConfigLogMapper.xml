@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.ConfigLogMapper">
+
+    <sql id="table">pc_cct_config_log</sql>
+
+    <resultMap id="ConfigLogMap" type="com.blockchain.server.cct.entity.ConfigLog">
+        <id property="id" column="id"/>
+        <result property="dataKey" column="data_key"/>
+        <result property="dataValueBefore" column="data_value_before"/>
+        <result property="dataTag" column="data_tag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="dataValue" column="data_value"/>
+        <result property="dataStatus" column="data_status"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="dataStatusBefore" column="data_status_before"/>
+    </resultMap>
+
+    <select id="listConfigLogOrderByTimeDESC" resultMap="ConfigLogMap">
+        SELECT * FROM
+        <include refid="table"/>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

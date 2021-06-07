@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.user.mapper.HighAuthenticationApplyMapper">
+
+
+
+
+    <select id="selectAuthenticationList" resultType="com.blockchain.server.user.dto.AuthenticationDto">
+        SELECT ua.id, um.nick_name AS nickName, um.international, um.mobile_phone AS mobilePhone,
+        ua.file_url, ua.STATUS, ua.create_time, ua.remark  FROM
+        dapp_u_high_authentication_apply ua
+        LEFT JOIN dapp_u_user_main um ON um.id = ua.user_id
+        <where>
+            <if test="params.nickName != null and params.nickName != '' ">AND um.nick_name =#{params.nickName}</if>
+            <if test="params.mobilePhone != null and params.mobilePhone != '' ">AND um.mobile_phone =#{params.mobilePhone}</if>
+            <if test="params.status != null and params.status != '' ">AND ua.status =#{params.status}</if>
+        </where>
+        ORDER BY
+        ua.create_time DESC
+    </select>
+</mapper>

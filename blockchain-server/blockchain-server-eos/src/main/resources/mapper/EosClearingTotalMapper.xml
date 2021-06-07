@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.eos.mapper.EosClearingTotalMapper">
+    <resultMap id="EosClearingTotalMap" type="com.blockchain.server.eos.entity.EosClearingTotal">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="addr" column="addr"/>
+        <result property="tokenSymbol" column="token_symbol"/>
+        <result property="balance" column="balance"/>
+        <result property="realBalance" column="real_balance"/>
+        <result property="diffBalance" column="diff_balance"/>
+        <result property="walletLastTime" column="wallet_last_time"/>
+        <result property="walletType" column="wallet_type"/>
+        <result property="preTime" column="pre_time"/>
+        <result property="preBalance" column="pre_balance"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_eos_clearing_total</sql>
+    <sql id="selectBase">
+        SELECT * FROM
+        <include refid="tableName"/>
+    </sql>
+    <sql id="timeDesc"> ORDER BY create_time DESC </sql>
+    <sql id="limitCount"> LIMIT ${count} </sql>
+    <sql id="tableWhere">
+        <where>
+            <if test="addr != null and addr != '' ">AND addr = #{addr}</if>
+            <if test="tokenSymbol != null and tokenSymbol != '' ">AND token_symbol = #{tokenSymbol}</if>
+            <if test="walletType != null and walletType != '' ">AND wallet_type = #{walletType}</if>
+        </where>
+    </sql>
+
+    <select id="selectNewestOne" resultMap="EosClearingTotalMap">
+        <include refid="selectBase"/>
+        <include refid="tableWhere"/>
+        <include refid="timeDesc"/>
+        <include refid="limitCount">
+            <property name="count" value="1"/>
+        </include>
+    </select>
+</mapper>

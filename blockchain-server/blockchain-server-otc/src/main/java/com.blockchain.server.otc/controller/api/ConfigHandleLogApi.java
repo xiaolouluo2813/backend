@@ -1,0 +1,15 @@
+package com.blockchain.server.otc.controller.api;
+
+public class ConfigHandleLogApi {
+    public final static String CONFIG_HANDLE_LOG_API = "配置信息操作日志控制器";
+    public final static String METHOD_API_PAGE_NUM = "页码";
+    public final static String METHOD_API_PAGE_SIZE = "每页显示条数";
+
+    public static class listConfigHandleLog {
+        public static final String METHOD_TITLE_NAME = "查询配置信息操作日志列表";
+        public static final String METHOD_TITLE_NOTE = "查询配置信息操作日志列表";
+        public static final String METHOD_API_DATA_KEY = "配置信息key";
+        public static final String METHOD_API_BEGIN_TIME = "开始时间";
+        public static final String METHOD_API_END_TIME = "结束时间";
+    }
+}

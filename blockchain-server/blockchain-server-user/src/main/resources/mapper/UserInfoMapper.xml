@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.user.mapper.UserInfoMapper">
+    <resultMap id="userListMap" type="com.blockchain.server.user.dto.UserListDto">
+        <result property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="lowAuth" column="low_auth"/>
+        <result property="highAuth" column="high_auth"/>
+        <result property="lowRemark" column="low_remark"/>
+        <result property="highRemark" column="high_remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+        <result property="realName" column="real_name"/>
+        <result property="international" column="international"/>
+        <result property="internationalCode" column="international_code"/>
+        <result property="incrCode" column="incr_code"/>
+        <result property="randomNumber" column="random_number"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="loginListType" column="login_list_type"/>
+        <result property="loginType" column="login_type"/>
+        <result property="txListType" column="tx_list_type"/>
+        <result property="txType" column="tx_type"/>
+        <result property="lowAuthTime" column="low_auth_time"/>
+        <result property="highAuthTime" column="high_auth_time"/>
+        <result property="pMobilePhone" column="p_mobile_phone"/>
+        <result property="pNickName" column="p_nick_name"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_u_user_info</sql>
+
+    <select id="listSearchUser" resultMap="userListMap">
+        SELECT
+        ui.user_id user_id,
+        ui.email email,
+        ui.low_auth,
+        ui.high_auth,
+        ui.incr_code,
+        ui.random_number,
+        um.create_time,
+        um.mobile_phone,
+        aa.real_name,
+        aa.type id_type,
+        aa.id_number,
+        um.international,
+        login.list_type login_list_type,
+        login.type login_type,
+        tx.list_type tx_list_type,
+        tx.type tx_type,
+        pum.mobile_phone p_mobile_phone,
+        pum.nick_name p_nick_name
+        FROM
+        dapp_u_user_info ui
+        INNER JOIN dapp_u_user_main um ON ui.user_id = um.id
+        LEFT JOIN dapp_u_user_authentication aa ON um.id = aa.user_id
+        LEFT JOIN dapp_u_user_list login ON ui.user_id = login.user_id
+        AND login.list_type = 'BLACK'
+        AND login.type = 'BAN_LOGIN'
+        LEFT JOIN dapp_u_user_list tx ON ui.user_id = tx.user_id
+        AND tx.list_type = 'BLACK'
+        AND tx.type = 'BAN_TX'
+        left join dapp_u_user_relation ur on um.id = ur.user_id
+        left join dapp_u_user_main pum on ur.pid = pum.id
+        <where>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                um.mobile_phone = #{mobilePhone}
+            </if>
+            <if test="email != null and email != ''">
+                and ui.email = #{email}
+            </if>
+            <if test="lowAuth != null and lowAuth != ''">
+                and ui.low_auth = #{lowAuth}
+            </if>
+            <if test="highAuth != null and highAuth != ''">
+                and ui.high_auth = #{highAuth}
+            </if>
+            <if test="incrCode != null">
+                and ui.incr_code = #{incrCode}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and date_format(um.create_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and date_format(um.create_time, '%y%m%d') &lt;= date_format(#{endTime}, '%y%m%d')
+            </if>
+        </where>
+        order by um.create_time desc
+    </select>
+
+    <select id="realNameAudit" resultMap="userListMap">
+        SELECT
+        ui.user_id, ui.low_auth, ui.high_auth, um.create_time, um.mobile_phone, ua.real_name, ua.type id_type,
+        ua.id_number, um.international, um.nick_name
+        FROM
+        <include refid="tableName"/>
+        ui
+        INNER JOIN dapp_u_user_main um
+        ON ui.user_id = um.id
+        left JOIN dapp_u_user_authentication ua
+        ON um.id = ua.user_id
+        <where>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                um.mobile_phone = #{mobilePhone}
+            </if>
+            <if test="realName != null and realName != ''">
+                and ua.real_name = #{realName}
+            </if>
+            <if test="lowAuth != null and lowAuth != ''">
+                and ui.low_auth = #{lowAuth}
+            </if>
+            <if test="highAuth != null and highAuth != ''">
+                and ui.high_auth = #{highAuth}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and date_format(um.create_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and date_format(um.create_time, '%y%m%d') &lt;= date_format(#{endTime}, '%y%m%d')
+            </if>
+        </where>
+        order by ui.create_time
+        <choose>
+            <when test="sort != null">
+                ${sort}
+            </when>
+            <otherwise>
+                desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectUserInfoAndMainByUserId" parameterType="java.lang.String" resultMap="userListMap">
+        SELECT
+        um.id, um.create_time, um.nick_name, um.mobile_phone, ui.low_auth, ui.high_auth, um.international, ua.type
+        id_type, ua.id_number, ua.file_url1, ua.file_url2, ua.file_url4, ua.real_name, ua.create_time low_auth_time,
+        ua.modify_time high_auth_time
+        FROM
+        <include refid="tableName"/>
+        ui
+        INNER JOIN dapp_u_user_main um
+        ON ui.user_id = um.id
+        LEFT JOIN dapp_u_user_authentication ua
+        ON um.id = ua.user_id
+        WHERE um.id = #{userId}
+    </select>
+
+    <select id="selectUserAuthenticationInfoByUserId" parameterType="java.lang.String" resultMap="userListMap">
+        select
+        um.id, um.create_time, um.nick_name, um.mobile_phone, ui.low_auth, ui.high_auth, um.international,
+        duua.real_name
+        from
+        <include refid="tableName"/>
+        ui
+        inner join dapp_u_user_main um
+        on ui.user_id = um.id
+        left join dapp_u_user_authentication duua
+        on um.id = duua.user_id
+        where um.id = #{userId}
+    </select>
+
+    <select id="listSearchUserAsset" parameterType="java.lang.String" resultMap="userListMap">
+        select
+        duum.id user_id, duum.mobile_phone, duum.international, duui.email, duua.real_name, duua.type id_type,
+        duua.id_number
+        from
+        <include refid="tableName"/>
+        duui
+        inner join dapp_u_user_main duum
+        on duum.id = duui.user_id
+        left join dapp_u_user_authentication duua
+        on duum.id = duua.user_id
+        <where>
+            <if test="realName != null and realName != ''">
+                duua.real_name = #{realName}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                and duum.mobile_phone = #{mobilePhone}
+            </if>
+            <if test="email != null and email != ''">
+                and duui.email = #{email}
+            </if>
+        </where>
+        order by duum.create_time desc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.eos.mapper.WalletOutMapper">
+    <resultMap id="walletOutMap" type="com.blockchain.server.eos.dto.WalletOutDTO">
+        <result property="id" column="id"/>
+        <result property="addr" column="account_name"/>
+        <result property="tokenSymbol" column="token_symbol"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_eos_wallet_out</sql>
+
+    <select id="listByStatus" resultMap="walletOutMap">
+        SELECT id,account_name,token_name,token_symbol,remark,status
+        FROM
+        <include refid="tableName"/>
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blockchain.server.quantized.mapper.QuantizedOrderMapper">
+
+    <sql id="tableName">pc_quantized_order</sql>
+    <resultMap id="quantizedOrderDTOMap" type="com.blockchain.server.quantized.dto.QuantizedOrderDto">
+        <result column="id" property="id"></result>
+        <result column="amount" property="amount"></result>
+        <result column="canceledAt" property="canceled_at"></result>
+        <result column="createdAt" property="created_at"></result>
+        <result column="fieldAmount" property="field_amount"></result>
+        <result column="fieldCashAmount" property="field_cash_amount"></result>
+        <result column="fieldFees" property="field_fees"></result>
+        <result column="finishedAt" property="finished_at"></result>
+        <result column="price" property="price"></result>
+        <result column="source" property="source"></result>
+        <result column="state" property="state"></result>
+        <result column="symbol" property="symbol"></result>
+        <result column="type" property="type"></result>
+        <result column="userId" property="user_id"></result>
+    </resultMap>
+
+    <select id="listAll" resultMap="quantizedOrderDTOMap" >
+        select *
+        FROM
+        <include refid="tableName"/>
+        <where>
+            <if test="userId!=null">
+                and user_id = #{userId}
+            </if>
+            <if test="state!=null">
+                and state = #{state}
+            </if>
+            <if test="type!=null">
+                and type = #{type}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

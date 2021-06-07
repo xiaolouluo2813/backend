@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.OrderHandleLogMapper">
+
+    <sql id="table">otc_order_handle_log</sql>
+
+    <resultMap id="OrderHandleLogMap" type="com.blockchain.server.otc.entity.OrderHandleLog">
+        <id property="id" column="id"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="beforeStatus" column="before_status"/>
+        <result property="sysUserId" column="sys_user_id"/>
+    </resultMap>
+
+    <resultMap id="OrderHandleLogDTOMap"
+               type="com.blockchain.server.otc.dto.orderhandlelog.ListOrderHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beforeStatus" column="before_status"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+    </resultMap>
+
+    <select id="listOrderHandleLog" resultMap="OrderHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="orderNumber != null and orderNumber != ''">
+                order_number = #{orderNumber}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

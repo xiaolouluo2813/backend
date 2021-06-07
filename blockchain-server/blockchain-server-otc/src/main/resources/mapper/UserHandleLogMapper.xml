@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.UserHandleLogMapper">
+
+    <sql id="table">otc_user_handle_log</sql>
+
+    <resultMap id="UserHandleLogMap" type="com.blockchain.server.otc.entity.UserHandleLog">
+        <id property="id" column="id"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="handleNumberType" column="handle_number_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="handleNumber" column="handle_number"/>
+    </resultMap>
+
+    <resultMap id="UserHandleLogDTOMap" type="com.blockchain.server.otc.dto.userhandlelog.ListUserHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="handleNumberType" column="handle_number_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="handleNumber" column="handle_number"/>
+    </resultMap>
+
+    <select id="listUserHandleLog" resultMap="UserHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="handleNumber != null and handleNumber != ''">
+                AND handle_number = #{handleNumber}
+            </if>
+            <if test="handleNumberType != null and handleNumberType != ''">
+                AND handle_number_type = #{handleNumberType}
+            </if>
+            <if test="handleType != null and handleType != ''">
+                AND handle_type = #{handleType}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

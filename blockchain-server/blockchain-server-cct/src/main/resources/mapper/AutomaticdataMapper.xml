@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.AutomaticdataMapper">
+    <sql id="table">app_cct_automaticdata</sql>
+    <resultMap id="AutomaticdataMap" type="com.blockchain.server.cct.entity.Automaticdata">
+        <id property="id" column="id"/>
+        <result property="minAmount" column="min_amount"/>
+        <result property="orderType" column="order_type"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="minPrice" column="min_price"/>
+        <result property="id" column="id"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="maxPrice" column="max_price"/>
+        <result property="maxAmount" column="max_amount"/>
+    </resultMap>
+
+    <select id="selectByCoinAndUnitAndType" resultMap="AutomaticdataMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE coin_name = #{coinName}
+        AND unit_name = #{unitName}
+        AND order_type = #{orderType}
+    </select>
+
+</mapper>

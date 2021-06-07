@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.AboutUsMapper">
+
+    <sql id="tableName">conf_about_us</sql>
+
+    <resultMap type="com.blockchain.server.sysconf.entity.AboutUs" id="AboutUsResult">
+        <id     property="id"       column="id"      />
+        <result property="content"      column="text_content"/>
+        <result property="languages"    column="languages"   />
+        <result property="createTime"   column="create_time"  />
+        <result property="modifyTime"   column="modify_time"  />
+    </resultMap>
+
+    <update id="updateAboutUs">
+        update <include refid="tableName"/> set text_content=#{content},languages=#{languages},modify_time=#{modifyTime} where id = #{id}
+    </update>
+
+    <select id="listAllOrderByCreateTimeDesc" resultMap="AboutUsResult">
+        SELECT * FROM <include refid="tableName"/> ORDER BY create_time DESC
+    </select>
+
+    <select id="findNewestAboutUs" resultMap="AboutUsResult">
+        SELECT * FROM <include refid="tableName"/> WHERE languages=#{languages} ORDER BY create_time DESC LIMIT 1
+    </select>
+
+    <delete id="deleteAboutUsById" parameterType="java.lang.String">
+        DELETE FROM <include refid="tableName"/> WHERE id=#{id}
+    </delete>
+
+
+
+    <sql id="selectAboutUsVo">
+        select id, text_content, languages, create_time, modify_time from conf_about_us
+    </sql>
+
+    <select id="selectAboutUsById" parameterType="String" resultMap="AboutUsResult">
+        <include refid="selectAboutUsVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectAboutUsList" parameterType="com.blockchain.server.sysconf.dto.AboutUsQueryConditionDTO" resultMap="AboutUsResult">
+        <include refid="selectAboutUsVo"/>
+        <where>
+            <if test="textContent != null and textContent != ''"> and text_content like concat('%',  #{textContent}, '%')</if>
+            <if test="beginTime != null">and create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">and create_time &lt;= #{endTime}</if>
+        </where>
+    </select>
+
+</mapper>

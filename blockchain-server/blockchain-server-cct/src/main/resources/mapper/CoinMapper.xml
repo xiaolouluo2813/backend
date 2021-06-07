@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.CoinMapper">
+
+    <sql id="table">app_cct_coin</sql>
+
+    <resultMap id="CoinMap" type="com.blockchain.server.cct.entity.Coin">
+        <id property="id" column="id"/>
+        <result property="coinDecimals" column="coin_decimals"/>
+        <result property="unitDecimals" column="unit_decimals"/>
+        <result property="coinNet" column="coin_net"/>
+        <result property="unitNet" column="unit_net"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="rank" column="rank"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="tag" column="tag"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="selectByCoinUnitAndStatus" resultMap="CoinMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE coin_name = #{coinName}
+        AND unit_name = #{unitName}
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <select id="listCoin" resultMap="CoinMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="coinName != null and coinName != ''">
+                coin_name = #{coinName}
+            </if>
+            <if test="unitName != null and unitName != ''">
+                AND unit_name = #{unitName}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY rank ASC
+    </select>
+
+    <select id="selectByUnitAndGroupByUnit" resultMap="CoinMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE unit_name = #{unitName}
+        GROUP BY unit_name
+    </select>
+
+</mapper>

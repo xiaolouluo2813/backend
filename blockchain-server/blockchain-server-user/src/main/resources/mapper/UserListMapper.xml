@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.user.mapper.UserListMapper">
+    <resultMap id="userListMap" type="com.blockchain.server.user.dto.BlackAndWhiteDto">
+        <result property="id" column="id"/>
+        <result property="listType" column="list_type"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="international" column="international"/>
+        <result property="createTime" column="create_time"/>
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+        <result property="realName" column="real_name"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <sql id="table_name">dapp_u_user_list</sql>
+
+    <select id="listBlacklistWhitelist" parameterType="java.lang.String" resultMap="userListMap">
+        SELECT
+        ul.id, ul.list_type, um.nick_name, um.mobile_phone, um.international, um.create_time, aa.type id_type,
+        aa.id_number, aa.real_name, ul.type
+        FROM
+        <include refid="table_name"/>
+        ul
+        INNER JOIN dapp_u_user_main um
+        ON ul.user_id = um.id
+        left JOIN dapp_u_user_authentication aa
+        ON um.id = aa.user_id
+        where ul.list_type = #{listType}
+        <if test="type != null and type != ''">
+            and ul.type = #{type}
+        </if>
+        order by ul.create_time desc
+    </select>
+
+    <select id="countUserList" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from
+        <include refid="table_name"/>
+        where user_id = #{userId}
+        and list_type = #{listType}
+        and type = #{type}
+    </select>
+
+    <select id="listUserListByUserId" parameterType="java.lang.String" resultType="com.blockchain.server.user.entity.UserList">
+        select id, user_id, list_type, type, create_time
+        from <include refid="table_name"/>
+        where user_id = #{userId}
+        and list_type = #{listType}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.DealStatsMapper">
+
+    <sql id="table">otc_deal_stats</sql>
+
+    <resultMap id="DealStatsMap" type="com.blockchain.server.otc.entity.DealStats">
+        <id property="userId" column="user_id"/>
+        <result property="adTransNum" column="ad_trans_num"/>
+        <result property="orderSellNum" column="order_sell_num"/>
+        <result property="orderBuyNum" column="order_buy_num"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="adMarkNum" column="ad_mark_num"/>
+    </resultMap>
+
+    <resultMap id="DealStatsDTOMap" type="com.blockchain.server.otc.dto.dealstats.ListDealStatsResultDTO">
+        <id property="userId" column="user_id"/>
+        <result property="adTransNum" column="ad_trans_num"/>
+        <result property="orderSellNum" column="order_sell_num"/>
+        <result property="orderBuyNum" column="order_buy_num"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="adMarkNum" column="ad_mark_num"/>
+    </resultMap>
+
+
+    <select id="listDealStats" resultMap="DealStatsDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY modify_time DESC
+    </select>
+
+</mapper>

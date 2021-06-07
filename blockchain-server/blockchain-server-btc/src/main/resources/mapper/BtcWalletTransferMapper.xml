@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.btc.mapper.BtcWalletTransferMapper">
+    <resultMap id="BtcWalletTransferMap" type="com.blockchain.server.btc.dto.BtcWalletTransferDTO">
+        <result property="toAddr" column="to_addr"/>
+        <result property="amount" column="amount"/>
+        <result property="tokenId" column="token_id"/>
+        <result property="tokenSymbol" column="token_symbol"/>
+        <result property="remark" column="remark"/>
+        <result property="gasTokenName" column="gas_token_name"/>
+        <result property="gasTokenSymbol" column="gas_token_symbol"/>
+        <result property="transferType" column="transfer_type"/>
+        <result property="gasTokenType" column="gas_token_type"/>
+        <result property="id" column="id"/>
+        <result property="fromAddr" column="from_addr"/>
+        <result property="hash" column="hash"/>
+        <result property="gasPrice" column="gas_price"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <resultMap id="BtcWalletTransfer" type="com.blockchain.server.btc.entity.BtcWalletTransfer">
+        <result property="toAddr" column="to_addr"/>
+        <result property="amount" column="amount"/>
+        <result property="tokenId" column="token_id"/>
+        <result property="tokenSymbol" column="token_symbol"/>
+        <result property="remark" column="remark"/>
+        <result property="gasTokenName" column="gas_token_name"/>
+        <result property="gasTokenSymbol" column="gas_token_symbol"/>
+        <result property="transferType" column="transfer_type"/>
+        <result property="gasTokenType" column="gas_token_type"/>
+        <result property="id" column="id"/>
+        <result property="fromAddr" column="from_addr"/>
+        <result property="hash" column="hash"/>
+        <result property="gasPrice" column="gas_price"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <resultMap id="WalletTxMap" type="com.blockchain.common.base.dto.wallet.WalletTxDTO">
+        <result property="txId" column="id"/>
+        <result property="hash" column="hash"/>
+        <result property="userId" column="user_open_id"/>
+        <result property="from" column="from_addr"/>
+        <result property="to" column="to_addr"/>
+        <result property="coinMain" column="token_main"/>
+        <result property="coinType" column="token_id"/>
+        <result property="coinName" column="token_symbol"/>
+        <result property="amount" column="amount"/>
+        <result property="gasPrice" column="gas_price"/>
+        <result property="gasType" column="gas_token_type"/>
+        <result property="gasName" column="gas_token_symbol"/>
+        <result property="txType" column="transfer_type"/>
+        <result property="txStatus" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_btc_wallet_transfer tx</sql>
+    <sql id="tableColumns"> tx.id,tx.hash,from_addr,tx.to_addr,tx.token_id,tx.token_symbol,CONCAT(tx.amount) as amount, CONCAT(tx.gas_price) as gas_price,tx.gas_token_type,tx.gas_token_symbol,tx.transfer_type,tx.status,tx.remark,tx.create_time,tx.update_time </sql>
+    <sql id="timeDesc">ORDER BY tx.create_time DESC</sql>
+    <sql id="selectBase">
+        SELECT
+        <include refid="tableColumns"/>
+        FROM
+        <include refid="tableName"/>
+    </sql>
+    <sql id="tableWhere">
+        <where>
+            <if test="params.from != null and params.from != '' ">AND tx.from_addr = #{params.from}</if>
+            <if test="params.to != null and params.to != '' ">AND tx.to_addr = #{params.to}</if>
+            <if test="params.userId != null and params.userId != '' ">AND wallet.user_open_id =#{params.userId}</if>
+            <if test="params.txId != null and params.txId != ''">AND tx.id = #{params.txId}</if>
+            <if test="params.hash != null and params.hash != '' ">AND tx.hash = #{params.hash}</if>
+            <if test="params.coinType != null and params.coinType != '' ">AND tx.token_id = #{params.coinType}</if>
+            <if test="params.coinName != null and params.coinName != '' ">AND tx.token_symbol = #{params.coinName}</if>
+            <if test="params.txType != null and params.txType != '' ">AND tx.transfer_type = #{params.txType}</if>
+            <if test="params.txStatus != null">AND tx.status = #{params.txStatus}</if>
+            <if test="params.startDate != null and params.startDate != ''">AND DATE_FORMAT(tx.create_time,'%Y-%m-%d')
+                >= DATE_FORMAT(#{params.startDate},'%Y-%m-%d')
+            </if>
+            <if test="params.endDate != null and params.endDate != ''">AND DATE_FORMAT(tx.create_time,'%Y-%m-%d')
+                &lt;= DATE_FORMAT(#{params.endDate},'%Y-%m-%d')
+            </if>
+            <!--<if test="params.startDate != null ">AND tx.create_time <![CDATA[>=]]> #{params.startDate}</if>-->
+            <!--<if test="params.endDate != null ">AND tx.create_time <![CDATA[<=]]> #{params.endDate}</if>-->
+        </where>
+    </sql>
+    <sql id="tableById">WHERE tx.id = #{id}</sql>
+    <sql id="selectOutAndInVo">
+        SELECT
+        wallet.user_open_id, 'BTC' AS token_main,
+        <include refid="tableColumns"/>
+        FROM
+        <include refid="tableName"/>
+        LEFT JOIN
+        dapp_btc_wallet wallet ON
+        tx.${addrType} = wallet.addr AND tx.token_id = wallet.token_id
+    </sql>
+
+    <select id="findOutTx" resultMap="WalletTxMap">
+        <include refid="selectOutAndInVo">
+            <property name="addrType" value="from_addr"/>
+        </include>
+        <include refid="tableById"/>
+    </select>
+
+    <select id="findInTx" resultMap="WalletTxMap">
+        <include refid="selectOutAndInVo">
+            <property name="addrType" value="to_addr"/>
+        </include>
+        <include refid="tableById"/>
+    </select>
+
+    <select id="selectOutTx" resultMap="WalletTxMap">
+        <include refid="selectOutAndInVo">
+            <property name="addrType" value="from_addr"/>
+        </include>
+        <include refid="tableWhere"/>
+        <include refid="timeDesc"/>
+    </select>
+
+    <select id="selectInTx" resultMap="WalletTxMap">
+        <include refid="selectOutAndInVo">
+            <property name="addrType" value="to_addr"/>
+        </include>
+        <include refid="tableWhere"/>
+        <include refid="timeDesc"/>
+    </select>
+
+    <select id="selectByAddrAndTime" resultMap="BtcWalletTransferMap">
+        <include refid="selectBase"/>
+        WHERE
+        (tx.from_addr = #{addr}
+        OR to_addr = #{addr} )
+        AND tx.token_id = #{tokenId}
+        AND tx.update_time <![CDATA[>]]> #{startDate}
+        AND tx.update_time <![CDATA[<=]]> #{endDate}
+        AND tx.status = 1
+    </select>
+
+    <select id="findByIdForUpdate" resultMap="BtcWalletTransfer">
+        <include refid="selectBase"/>
+        WHERE
+        id = #{id}
+        FOR UPDATE
+    </select>
+
+</mapper>

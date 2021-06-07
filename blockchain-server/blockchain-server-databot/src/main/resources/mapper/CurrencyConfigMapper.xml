@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.databot.mapper.CurrencyConfigMapper">
+
+    <sql id="table">bot_currency_config</sql>
+
+    <resultMap id="CurrencyConfigMap" type="com.blockchain.server.databot.entity.CurrencyConfig">
+        <id property="id" column="id"/>
+        <result property="currencyPair" column="currency_pair"/>
+        <result property="kdayTotalAmount" column="k_day_total_amount"/>
+        <result property="kmaxChangePercent" column="k_max_change_percent"/>
+        <result property="kchangePercent" column="k_change_percent"/>
+        <result property="buyPricePercent" column="buy_price_percent"/>
+        <result property="buyTotalAmount" column="buy_total_amount"/>
+        <result property="sellPricePercent" column="sell_price_percent"/>
+        <result property="sellTotalAmount" column="sell_total_amount"/>
+        <result property="kmaxPrice" column="k_max_price"/>
+        <result property="kminPrice" column="k_min_price"/>
+        <result property="buyMaxPrice" column="buy_max_price"/>
+        <result property="buyMinPrice" column="buy_min_price"/>
+        <result property="sellMaxPrice" column="sell_max_price"/>
+        <result property="sellMinPrice" column="sell_min_price"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <resultMap id="CurrencyConfigDTOMap" type="com.blockchain.server.databot.dto.currencyconfig.ListConfigResultDTO">
+        <id property="id" column="id"/>
+        <result property="currencyPair" column="currency_pair"/>
+        <result property="kdayTotalAmount" column="k_day_total_amount"/>
+        <result property="kmaxChangePercent" column="k_max_change_percent"/>
+        <result property="kchangePercent" column="k_change_percent"/>
+        <result property="buyPricePercent" column="buy_price_percent"/>
+        <result property="buyTotalAmount" column="buy_total_amount"/>
+        <result property="sellPricePercent" column="sell_price_percent"/>
+        <result property="sellTotalAmount" column="sell_total_amount"/>
+        <result property="kmaxPrice" column="k_max_price"/>
+        <result property="kminPrice" column="k_min_price"/>
+        <result property="buyMaxPrice" column="buy_max_price"/>
+        <result property="buyMinPrice" column="buy_min_price"/>
+        <result property="sellMaxPrice" column="sell_max_price"/>
+        <result property="sellMinPrice" column="sell_min_price"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <select id="getConfigByCurrencyPair" resultMap="CurrencyConfigMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE
+        currency_pair = #{currencyPair}
+    </select>
+
+    <select id="listConfig" resultMap="CurrencyConfigDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="currencyPair != null and currencyPair != ''">
+                currency_pair = #{currencyPair}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY modify_time DESC
+    </select>
+
+    <update id="updateConfig" parameterType="com.blockchain.server.databot.dto.currencyconfig.UpdateConfigParamDTO">
+        UPDATE
+        <include refid="table"/>
+        SET
+        <if test="paramDTO.kchangePercent != null">
+            k_change_percent = #{paramDTO.kchangePercent},
+        </if>
+        <if test="paramDTO.kmaxChangePercent != null">
+            k_max_change_percent = #{paramDTO.kmaxChangePercent},
+        </if>
+        <if test="paramDTO.kdayTotalAmount != null">
+            k_day_total_amount = #{paramDTO.kdayTotalAmount},
+        </if>
+        <if test="paramDTO.kmaxPrice != null">
+            k_max_price = #{paramDTO.kmaxPrice},
+        </if>
+        <if test="paramDTO.kminPrice != null">
+            k_min_price = #{paramDTO.kminPrice},
+        </if>
+        <if test="paramDTO.buyPricePercent != null">
+            buy_price_percent = #{paramDTO.buyPricePercent},
+        </if>
+        <if test="paramDTO.buyTotalAmount != null">
+            buy_total_amount = #{paramDTO.buyTotalAmount},
+        </if>
+        <if test="paramDTO.buyMaxPrice != null">
+            buy_max_price = #{paramDTO.buyMaxPrice},
+        </if>
+        <if test="paramDTO.buyMinPrice != null">
+            buy_min_price = #{paramDTO.buyMinPrice},
+        </if>
+        <if test="paramDTO.sellPricePercent != null">
+            sell_price_percent = #{paramDTO.sellPricePercent},
+        </if>
+        <if test="paramDTO.sellTotalAmount != null">
+            sell_total_amount = #{paramDTO.sellTotalAmount},
+        </if>
+        <if test="paramDTO.sellMaxPrice != null">
+            sell_max_price = #{paramDTO.sellMaxPrice},
+        </if>
+        <if test="paramDTO.sellMinPrice != null">
+            sell_min_price = #{paramDTO.sellMinPrice},
+        </if>
+        <if test="paramDTO.status != null and paramDTO.status != ''">
+            status = #{paramDTO.status},
+        </if>
+        <if test="paramDTO.priceType != null and paramDTO.priceType != ''">
+            price_type = #{paramDTO.priceType},
+        </if>
+        modify_time = #{modifyTime}
+        WHERE
+        id = #{paramDTO.id}
+    </update>
+
+</mapper>

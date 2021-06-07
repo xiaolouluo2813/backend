@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blockchain.server.quantized.mapper.OrderErrMapper">
+
+    <sql id="tableName">pc_quantized_order_err</sql>
+    <resultMap id="orderErrDTOMap" type="com.blockchain.server.quantized.dto.OrderErrDto">
+        <result column="id" property="id"></result>
+        <result column="symbol" property="symbol"></result>
+        <result column="amount" property="amount"></result>
+        <result column="price" property="price"></result>
+        <result column="orderType" property="order_type"></result>
+        <result column="msg" property="msg"></result>
+        <result column="createTime" property="create_time"></result>
+        <result column="userId" property="user_id"></result>
+    </resultMap>
+
+    <select id="listAll" resultMap="orderErrDTOMap" >
+        select *
+        FROM
+        <include refid="tableName"/>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

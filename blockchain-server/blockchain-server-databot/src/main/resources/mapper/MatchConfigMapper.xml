@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.databot.mapper.MatchConfigMapper">
+
+    <sql id="table">bot_match_config</sql>
+
+    <resultMap id="MatchConfigMap" type="com.blockchain.server.databot.entity.MatchConfig">
+        <id property="id" column="id"/>
+        <result property="maxPercent" column="max_percent"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="minPrice" column="min_price"/>
+        <result property="priceType" column="price_type"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="maxPrice" column="max_price"/>
+        <result property="minPercent" column="min_percent"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="MatchConfigDTOMap" type="com.blockchain.server.databot.dto.matchconfig.ListMatchConfigResultDTO">
+        <id property="id" column="id"/>
+        <result property="maxPercent" column="max_percent"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="minPrice" column="min_price"/>
+        <result property="priceType" column="price_type"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="maxPrice" column="max_price"/>
+        <result property="minPercent" column="min_percent"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+
+    <select id="listConfig" resultMap="MatchConfigDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="coinName != null and coinName != ''">
+                AND coin_name = #{coinName}
+            </if>
+            <if test="unitName != null and unitName != ''">
+                AND unit_name = #{unitName}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="priceType != null and priceType != ''">
+                AND price_type = #{priceType}
+            </if>
+        </where>
+        ORDER BY modify_time DESC
+    </select>
+
+    <select id="selectByCoinAndUnit" resultMap="MatchConfigMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE coin_name = #{coinName}
+        AND unit_name = #{unitName}
+    </select>
+
+    <update id="updateConfig" parameterType="com.blockchain.server.databot.dto.matchconfig.UpdateMatchConfigParamDTO">
+        UPDATE
+        <include refid="table"/>
+        SET
+        <if test="paramDTO.userId != null and paramDTO.userId != ''">
+            user_id = #{paramDTO.userId},
+        </if>
+        <if test="paramDTO.coinName != null and paramDTO.coinName != ''">
+            coin_name = #{paramDTO.coinName},
+        </if>
+        <if test="paramDTO.unitName != null and paramDTO.unitName != ''">
+            unit_name = #{paramDTO.unitName},
+        </if>
+        <if test="paramDTO.minPrice != null">
+            min_price = #{paramDTO.minPrice},
+        </if>
+        <if test="paramDTO.maxPrice != null">
+            max_price = #{paramDTO.maxPrice},
+        </if>
+        <if test="paramDTO.minPercent != null">
+            min_percent = #{paramDTO.minPercent},
+        </if>
+        <if test="paramDTO.maxPercent != null">
+            max_percent = #{paramDTO.maxPercent},
+        </if>
+        <if test="paramDTO.priceType != null and paramDTO.priceType != ''">
+            price_type = #{paramDTO.priceType},
+        </if>
+        <if test="paramDTO.status != null and paramDTO.status != ''">
+            status = #{paramDTO.status},
+        </if>
+        modify_time = #{modifyTime}
+        WHERE
+        id = #{paramDTO.id}
+    </update>
+
+</mapper>

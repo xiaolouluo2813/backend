@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.user.mapper.AuthenticationApplyMapper">
+    <resultMap id="AppUUserLoinLogMap" type="com.blockchain.server.user.entity.AuthenticationApply">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="type" column="type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="realName" column="real_name"/>
+        <result property="fileUrl1" column="file_url1"/>
+        <result property="fileUrl2" column="file_url2"/>
+        <result property="fileUrl3" column="file_url3"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <resultMap id="authenticationApplyMap" type="com.blockchain.server.user.dto.AuthenticationApplyDto">
+        <result property="userId" column="user_id"/>
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="fileUrl1" column="file_url1"/>
+        <result property="fileUrl2" column="file_url2"/>
+        <result property="lowStatus" column="low_status"/>
+        <result property="lowCreateTime" column="low_create_time"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="highStatus" column="high_status"/>
+        <result property="highCreateTime" column="high_create_time"/>
+    </resultMap>
+
+    <sql id="tableName">dapp_u_authentication_apply</sql>
+
+    <select id="judgeAuthentication" parameterType="java.lang.String" resultType="java.lang.String">
+        select status
+        from
+        <include refid="tableName"/>
+        where user_id = #{userId}
+        order by modify_time desc
+        limit 1
+    </select>
+
+    <select id="selectAuthenticationList" resultType="com.blockchain.server.user.dto.AuthenticationDto">
+        SELECT ua.id, um.nick_name AS nickName, um.international, um.mobile_phone AS mobilePhone,
+        ua.type AS idType, ua.real_name AS realName, ua.file_url1 AS file_url,
+        ua.file_url2, ua.STATUS, ua.create_time, ua.remark FROM
+        dapp_u_authentication_apply ua
+        LEFT JOIN dapp_u_user_main um ON um.id = ua.user_id
+        <where>
+            <if test="params.nickName != null and params.nickName != '' ">AND um.nick_name =#{params.nickName}</if>
+            <if test="params.mobilePhone != null and params.mobilePhone != '' ">AND um.mobile_phone
+                =#{params.mobilePhone}
+            </if>
+            <if test="params.status != null and params.status != '' ">AND ua.status =#{params.status}</if>
+        </where>
+        ORDER BY
+        ua.create_time DESC
+    </select>
+
+</mapper>

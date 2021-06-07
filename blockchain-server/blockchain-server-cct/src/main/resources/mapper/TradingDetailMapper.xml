@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.TradingDetailMapper">
+
+    <sql id="table">app_cct_trading_detail</sql>
+
+    <resultMap id="TradingDetailMap" type="com.blockchain.server.cct.entity.TradingDetail">
+        <id property="id" column="id"/>
+        <result property="recordId" column="record_id"/>
+        <result property="realAmount" column="real_amount"/>
+        <result property="chargeRatio" column="charge_ratio"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="serviceCharge" column="service_charge"/>
+        <result property="tradingType" column="trading_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="tradingNum" column="trading_num"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="publishId" column="publish_id"/>
+    </resultMap>
+
+    <resultMap id="SelectStatResultMap" type="com.blockchain.server.cct.dto.tradingDetail.SelectStatResultDTO">
+        <result property="sumCharge" column="sum_charge"/>
+        <result property="sumAmount" column="sum_amount"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="tradingType" column="trading_type"/>
+        <result property="orderType" column="order_type"/>
+        <result property="publishType" column="publish_type"/>
+    </resultMap>
+
+    <select id="listDetailByOrderId" resultType="com.blockchain.server.cct.dto.tradingDetail.ListDetailResultDTO">
+        SELECT
+        td.*,
+        tr.maker_price,
+        tr.taker_price
+        FROM
+        app_cct_trading_detail td LEFT JOIN app_cct_trading_record tr ON td.record_id = tr.id
+        WHERE publish_id = #{orderId}
+        ORDER BY td.create_time DESC
+    </select>
+
+    <select id="selectStatByUserId" resultMap="SelectStatResultMap"
+            parameterType="com.blockchain.server.cct.dto.tradingDetail.SelectStatParamDTO">
+        SELECT
+        SUM(td.service_charge) as sum_charge,
+        SUM(td.real_amount) as sum_amount,
+        td.coin_name,
+        td.trading_type,
+        po.order_type,
+        po.publish_type
+        FROM
+        app_cct_publish_order po LEFT JOIN app_cct_trading_detail td ON po.id = td.publish_id
+        WHERE po.user_id = #{param.userId}
+        <if test="param.orderType != null and param.orderType != ''">
+            AND po.order_type = #{param.orderType}
+        </if>
+        <if test="param.publishType != null and param.publishType != ''">
+            AND po.publish_type = #{param.publishType}
+        </if>
+        <if test="param.tradingType != null and param.tradingType != ''">
+            AND td.trading_type = #{param.tradingType}
+        </if>
+        <if test="param.coinName != null and param.coinName != ''">
+            AND td.coin_name = #{param.coinName}
+        </if>
+    </select>
+
+</mapper>

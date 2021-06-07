@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.currency.mapper.CurrencyMapper">
+
+    <sql id="table">dapp_currency</sql>
+
+    <resultMap id="CurrencyMap" type="com.blockchain.server.currency.entity.Currency">
+        <id property="currencyName" column="currency_name"/>
+        <result property="currencyNameEn" column="currency_name_en"/>
+        <result property="blockUrl" column="block_url"/>
+        <result property="descrEn" column="descr_en"/>
+        <result property="currencyNameCn" column="currency_name_cn"/>
+        <result property="issueTime" column="issue_time"/>
+        <result property="totalSupply" column="total_supply"/>
+        <result property="descrCn" column="descr_cn"/>
+        <result property="totalCirculation" column="total_circulation"/>
+        <result property="orderBy" column="order_by"/>
+        <result property="whitePaper" column="white_paper"/>
+        <result property="descrHk" column="descr_hk"/>
+        <result property="officialWebsite" column="official_website"/>
+        <result property="icoAmount" column="ico_amount"/>
+        <result property="currencyNameHk" column="currency_name_hk"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="listCurrency" resultMap="CurrencyMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="coinName != null and coinName != ''">
+                currency_name = #{coinName}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY order_by ASC
+    </select>
+
+    <select id="selectByCoinName" resultMap="CurrencyMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE currency_name = #{coinName}
+    </select>
+
+</mapper>

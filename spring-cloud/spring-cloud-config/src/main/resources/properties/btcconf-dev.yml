@@ -1,0 +1,10 @@
+btc:
+  rpc:
+    user: zjfzcoin
+    password: zjfz@123coin!678
+    url: http://btcnode:8332
+  usdt_property_id: 31
+
+# 控制模块内定时器是否启动时打开
+schedule:
+  open: true

@@ -1,0 +1,19 @@
+﻿spring:
+  application:
+    name: dapp-eureka-server
+  security:
+    user:
+      name: zjfz
+      password: zjfzcoin678eureka
+server:
+  port: 9001
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false

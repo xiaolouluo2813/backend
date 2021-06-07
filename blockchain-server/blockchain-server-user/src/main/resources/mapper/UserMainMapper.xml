@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.user.mapper.UserMainMapper">
+    <!--<resultMap id="userListMap" type="com.blockchain.server.user.dto.UserInfoDto">
+        <result property="userId" column="user_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="email" column="email"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+    </resultMap>-->
+    <resultMap id="userInfoMap" type="com.blockchain.common.base.dto.user.UserBaseInfoDTO">
+        <result property="userId" column="user_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="email" column="email"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+        <result property="international" column="international"/>
+    </resultMap>
+
+    <sql id="table_name">dapp_u_user_main</sql>
+
+    <select id="selectUserInfoByUserId" parameterType="java.lang.String" resultMap="userInfoMap">
+        SELECT um.id user_id, um.mobile_phone, ua.real_name, ui.email, um.international FROM
+        <include refid="table_name"/>
+        um
+        INNER JOIN dapp_u_user_info ui
+        ON um.id = ui.user_id
+        LEFT JOIN dapp_u_user_authentication ua
+        ON um.id = ua.user_id
+        where um.id = #{userId}
+    </select>
+
+    <select id="selectUserInfoByUserName" parameterType="java.lang.String" resultMap="userInfoMap">
+        SELECT um.id user_id, um.mobile_phone, ua.real_name, ui.email, um.international FROM
+        <include refid="table_name"/>
+        um
+        INNER JOIN dapp_u_user_info ui
+        ON um.id = ui.user_id
+        LEFT JOIN dapp_u_user_authentication ua
+        ON um.id = ua.user_id
+        where um.mobile_phone = #{userName}
+    </select>
+
+    <select id="selectMobilePhone" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from
+        <include refid="table_name"/>
+        where mobile_phone = #{mobilePhone}
+    </select>
+
+    <update id="updateMobilePhoneByUserId">
+        update
+        <include refid="table_name"/>
+        set mobile_phone = #{mobilePhone},
+          modify_time = #{date}
+        where id = #{userId}
+    </update>
+
+</mapper>

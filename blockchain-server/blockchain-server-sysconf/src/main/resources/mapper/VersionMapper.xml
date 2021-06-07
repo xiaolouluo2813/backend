@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.sysconf.mapper.VersionMapper">
+
+    <sql id="tableName">conf_version</sql>
+
+    <resultMap type="com.blockchain.server.sysconf.entity.Version" id="VersionResult">
+        <id     property="id"       column="id"      />
+        <result property="version"      column="version"/>
+        <result property="appUrl"    column="app_url"   />
+        <result property="remark"   column="remark"  />
+        <result property="compel"   column="compel"  />
+        <result property="device"   column="device"  />
+        <result property="createTime"   column="create_time"  />
+        <result property="modifyTime"   column="modify_time"  />
+    </resultMap>
+
+    <select id="checkVersion" parameterType="java.lang.String" resultMap="VersionResult">
+        SELECT * FROM <include refid="tableName"/> WHERE device=#{device} ORDER BY create_time DESC LIMIT 1
+    </select>
+
+    <select id="findNewVersion" parameterType="java.lang.String" resultMap="VersionResult">
+        SELECT * FROM <include refid="tableName"/> WHERE device=#{device} ORDER BY create_time DESC LIMIT 1
+    </select>
+
+    <delete id="deleteVersionById" parameterType="java.lang.String">
+        delete from <include refid="tableName"/> where id = #{id}
+    </delete>
+
+    <select id="listAll" parameterType="java.lang.String" resultMap="VersionResult">
+        SELECT * FROM <include refid="tableName"/>
+        <where>
+            <if test="device != null">
+                device=#{device}
+            </if>
+        </where>
+    </select>
+
+    <select id="findVersionById" parameterType="java.lang.String" resultMap="VersionResult">
+        SELECT * FROM <include refid="tableName"/> WHERE id=#{id}
+    </select>
+
+
+    <select id="selectVersionList" parameterType="com.blockchain.server.sysconf.entity.Version" resultMap="VersionResult">
+        SELECT * FROM <include refid="tableName"/>
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+            <if test="version != null and version != ''"> and version = #{version}</if>
+            <if test="appUrl != null and appUrl != ''"> and app_url = #{appUrl}</if>
+            <if test="remark != null and remark != ''"> and remark = #{remark}</if>
+            <if test="compel != null and compel != ''"> and compel = #{compel}</if>
+            <if test="device != null and device != ''"> and device = #{device}</if>
+            <if test="createTime != null and createTime != ''"> and create_time = #{createTime}</if>
+            <if test="modifyTime != null and modifyTime != ''"> and modify_time = #{modifyTime}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+
+</mapper>

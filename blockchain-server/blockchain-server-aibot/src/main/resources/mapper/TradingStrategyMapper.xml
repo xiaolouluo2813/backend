@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.blockchain.server.aibot.mapper.TradingStrategyMapper">
+
+	<sql id="table">pc_trading_strategy</sql>
+
+	<resultMap id="TradingStrategyMap"
+		type="com.blockchain.server.aibot.entity.TradingStrategy">
+		<id property="id" column="id" />
+		<result property="coin" column="coin" />
+		<result property="apiKey" column="api_key" />
+		<result property="secretKey" column="secret_key" />
+		<result property="startupFunds" column="startup_funds" />
+		<result property="gridNum" column="grid_num" />
+		<result property="spreads" column="spreads" />
+		<result property="state" column="state" />
+		<result property="modifyTime" column="modify_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<select id="selectByCoinAndState" resultMap="TradingStrategyMap">
+		SELECT * FROM
+		<include refid="table" />
+		<where>
+			<if test="coin != null and coin != ''">
+				coin = #{coin}
+			</if>
+			<if test="state != null and state != ''">
+				AND state = #{state}
+			</if>
+		</where>
+	</select>
+	<update id="updateTradingStrategy"
+		parameterType="com.blockchain.server.aibot.dto.TradingStrategyParamDTO">
+		UPDATE
+		<include refid="table" />
+		SET
+		<if test="paramDTO.coin != null">
+			coin = #{paramDTO.coin},
+		</if>
+		<if test="paramDTO.apiKey != null">
+			api_key = #{paramDTO.apiKey},
+		</if>
+		<if test="paramDTO.secretKey != null">
+			secret_key = #{paramDTO.secretKey},
+		</if>
+		<if test="paramDTO.startupFunds != null">
+			startup_funds = #{paramDTO.startupFunds},
+		</if>
+		<if test="paramDTO.gridNum != null">
+			grid_num = #{paramDTO.gridNum},
+		</if>
+		<if test="paramDTO.spreads != null">
+			spreads = #{paramDTO.spreads},
+		</if>
+		<if test="paramDTO.state != null">
+			state = #{paramDTO.state},
+		</if>
+		modify_time = #{modifyTime}
+		WHERE
+		id = #{paramDTO.id}
+	</update>
+</mapper>

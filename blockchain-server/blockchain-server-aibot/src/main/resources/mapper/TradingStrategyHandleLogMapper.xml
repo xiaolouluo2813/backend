@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.aibot.mapper.TradingStrategyHandleLogMapper">
+
+    <sql id="table">pc_trading_strategy_handle_log</sql>
+
+    <resultMap id="TradingStrategyHandleLogMap" type="com.blockchain.server.aibot.entity.TradingStrategyHandleLog">
+        <id property="id" column="id"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beforeCoin" column="before_coin"/>
+        <result property="afterCoin" column="after_coin"/>
+        <result property="beforeApiKey" column="before_apiKey"/>
+        <result property="afterApiKey" column="after_apiKey"/>
+        <result property="beforeSecretKey" column="before_secretKey"/>
+        <result property="afterSecretKey" column="after_secretKey"/>
+        <result property="beforeStartupFunds" column="before_startupFunds"/>
+        <result property="afterStartupFunds" column="after_startupFunds"/>
+        <result property="beforeGridNum" column="before_gridNum"/>
+        <result property="afterGridNum" column="after_gridNum"/>
+        <result property="beforeSpreads" column="before_spreads"/>
+        <result property="afterSpreads" column="after_spreads"/>
+        <result property="beforeState" column="before_state"/>
+        <result property="afterState" column="after_state"/>
+    </resultMap>
+
+    <resultMap id="TradingStrategyHandleLogDTOMap"
+               type="com.blockchain.server.aibot.dto.TradingStrategyHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beforeCoin" column="before_coin"/>
+        <result property="afterCoin" column="after_coin"/>
+        <result property="beforeApiKey" column="before_api_key"/>
+        <result property="afterApiKey" column="after_api_key"/>
+        <result property="beforeSecretKey" column="before_secret_key"/>
+        <result property="afterSecretKey" column="after_secret_key"/>
+        <result property="beforeStartupFunds" column="before_startup_funds"/>
+        <result property="afterStartupFunds" column="after_startup_funds"/>
+        <result property="beforeGridNum" column="before_grid_num"/>
+        <result property="afterGridNum" column="after_grid_num"/>
+        <result property="beforeSpreads" column="before_spreads"/>
+        <result property="afterSpreads" column="after_spreads"/>
+        <result property="beforeState" column="before_state"/>
+        <result property="afterState" column="after_state"/>
+    </resultMap>
+
+    <select id="listTradingStrategyHandleLog" resultMap="TradingStrategyHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="handleType != null and handleType != ''">
+                AND handle_type = #{handleType}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

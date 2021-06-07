@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.PublishOrderLogMapper">
+
+    <sql id="table">pc_cct_publish_order_log</sql>
+
+    <resultMap id="CctPublishOrderLogMap" type="com.blockchain.server.cct.entity.PublishOrderLog">
+        <id property="id" column="id"/>
+        <result property="afterValue" column="after_value"/>
+        <result property="field" column="field"/>
+        <result property="beforeValue" column="before_value"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="sysUserId" column="sys_user_id"/>
+    </resultMap>
+
+    <select id="listAllOrderByTimeDESC" resultMap="CctPublishOrderLogMap">
+        SELECT * FROM
+        <include refid="table"/>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

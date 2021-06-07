@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.CoinLogMapper">
+
+    <sql id="table">pc_cct_coin_log</sql>
+
+    <resultMap id="CoinLogMap" type="com.blockchain.server.cct.entity.CoinLog">
+        <id property="id" column="id"/>
+        <result property="coinDecimals" column="coin_decimals"/>
+        <result property="unitDecimals" column="unit_decimals"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="unitNet" column="unit_net"/>
+        <result property="coinNet" column="coin_net"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="tag" column="tag"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="listAllOrderByTimeDESC" resultMap="CoinLogMap">
+        SELECT * FROM
+        <include refid="table"/>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.otc.mapper.OrderMapper">
+
+    <sql id="table">otc_order</sql>
+
+    <resultMap id="OrderMap" type="com.blockchain.server.otc.entity.Order">
+        <id property="id" column="id"/>
+        <result property="orderType" column="order_type"/>
+        <result property="amount" column="amount"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="orderPayType" column="order_pay_type"/>
+        <result property="chargeRatio" column="charge_ratio"/>
+        <result property="buyUserId" column="buy_user_id"/>
+        <result property="adId" column="ad_id"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="sellStatus" column="sell_status"/>
+        <result property="sellUserId" column="sell_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="price" column="price"/>
+        <result property="buyStatus" column="buy_status"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="turnover" column="turnover"/>
+    </resultMap>
+
+    <resultMap id="OrderDTOMap" type="com.blockchain.server.otc.dto.order.ListOrderResultDTO">
+        <id property="id" column="id"/>
+        <result property="orderType" column="order_type"/>
+        <result property="amount" column="amount"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="orderPayType" column="order_pay_type"/>
+        <result property="chargeRatio" column="charge_ratio"/>
+        <result property="buyUserId" column="buy_user_id"/>
+        <result property="adId" column="ad_id"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="sellStatus" column="sell_status"/>
+        <result property="sellUserId" column="sell_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="price" column="price"/>
+        <result property="buyStatus" column="buy_status"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="turnover" column="turnover"/>
+    </resultMap>
+
+    <select id="selectByOrderNumber" resultMap="OrderMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE order_number = #{orderNumber}
+    </select>
+
+    <select id="selectByIdForUpdate" resultMap="OrderMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE id = #{orderId}
+        FOR UPDATE
+    </select>
+
+    <select id="selectByAdIdAndStatus" resultMap="OrderMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE ad_id = #{adId}
+        AND order_status IN
+        <foreach collection="status" item="sitem" open="(" separator="," close=")">
+            #{sitem}
+        </foreach>
+    </select>
+
+    <select id="listOrder" resultMap="OrderDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="userId != null and userId != ''">
+                (buy_user_id = #{userId} OR sell_user_id = #{userId})
+            </if>
+            <if test="param.orderNumber != null and param.orderNumber != ''">
+                AND order_number = #{param.orderNumber}
+            </if>
+            <if test="param.coinName != null and param.coinName != ''">
+                AND coin_name = #{param.coinName}
+            </if>
+            <if test="param.unitName != null and param.unitName != ''">
+                AND unit_name = #{param.unitName}
+            </if>
+            <if test="param.orderType != null and param.orderType != ''">
+                AND order_type = #{param.orderType}
+            </if>
+            <if test="param.orderStatus != null and param.orderStatus != ''">
+                AND order_status = #{param.orderStatus}
+            </if>
+            <if test="param.beginTime != null and param.beginTime != ''">
+                AND DATE_FORMAT(#{param.beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="param.endTime != null and param.endTime != ''">
+                AND DATE_FORMAT(#{param.endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY modify_time DESC
+    </select>
+
+    <select id="selectDTOByAdId" resultMap="OrderDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE ad_id = #{adId}
+        ORDER BY FIELD('order_status','NEW','UNDERWAY','APPEAL','FINISH','CANCEL'),modify_time DESC
+    </select>
+
+    <select id="selectDTOById" resultMap="OrderDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </select>
+
+</mapper>

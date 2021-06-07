@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.databot.mapper.MatchConfigHandleLogMapper">
+
+    <sql id="table">bot_match_config_handle_log</sql>
+
+    <resultMap id="MatchConfigHandleLogMap" type="com.blockchain.server.databot.entity.MatchConfigHandleLog">
+        <id property="id" column="id"/>
+        <result property="beforeMinPercent" column="before_min_percent"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="beforeStatus" column="before_status"/>
+        <result property="beforeUnitName" column="before_unit_name"/>
+        <result property="afterUnitName" column="after_unit_name"/>
+        <result property="beforePriceType" column="before_price_type"/>
+        <result property="beforeMinPrice" column="before_min_price"/>
+        <result property="afterPriceType" column="after_price_type"/>
+        <result property="afterMinPrice" column="after_min_price"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="beforeUserId" column="before_user_id"/>
+        <result property="beforeMaxPrice" column="before_max_price"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="afterMinPercent" column="after_min_percent"/>
+        <result property="afterUserId" column="after_user_id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="beforeCoinName" column="before_coin_name"/>
+        <result property="afterCoinName" column="after_coin_name"/>
+        <result property="afterMaxPrice" column="after_max_price"/>
+        <result property="afterMaxPercent" column="after_max_percent"/>
+        <result property="beforeMaxPercent" column="before_max_percent"/>
+    </resultMap>
+
+    <resultMap id="MatchConfigHandleLogDTOMap"
+               type="com.blockchain.server.databot.dto.matchconfig.ListMatchConfigHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="beforeMinPercent" column="before_min_percent"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="beforeStatus" column="before_status"/>
+        <result property="beforeUnitName" column="before_unit_name"/>
+        <result property="afterUnitName" column="after_unit_name"/>
+        <result property="beforePriceType" column="before_price_type"/>
+        <result property="beforeMinPrice" column="before_min_price"/>
+        <result property="afterPriceType" column="after_price_type"/>
+        <result property="afterMinPrice" column="after_min_price"/>
+        <result property="afterStatus" column="after_status"/>
+        <result property="beforeUserId" column="before_user_id"/>
+        <result property="beforeMaxPrice" column="before_max_price"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="afterMinPercent" column="after_min_percent"/>
+        <result property="afterUserId" column="after_user_id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="beforeCoinName" column="before_coin_name"/>
+        <result property="afterCoinName" column="after_coin_name"/>
+        <result property="afterMaxPrice" column="after_max_price"/>
+        <result property="afterMaxPercent" column="after_max_percent"/>
+        <result property="beforeMaxPercent" column="before_max_percent"/>
+    </resultMap>
+
+    <select id="listHandleLog" resultMap="MatchConfigHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="handleType != null and handleType != ''">
+                handle_type = #{handleType}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

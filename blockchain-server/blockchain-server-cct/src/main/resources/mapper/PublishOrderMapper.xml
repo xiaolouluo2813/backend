@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.PublishOrderMapper">
+
+    <sql id="table">app_cct_publish_order</sql>
+
+    <resultMap id="PublishOrderMap" type="com.blockchain.server.cct.entity.PublishOrder">
+        <id property="id" column="id"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="lastNum" column="last_num"/>
+        <result property="orderType" column="order_type"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="lastTurnover" column="last_turnover"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="totalTurnover" column="total_turnover"/>
+        <result property="userId" column="user_id"/>
+        <result property="version" column="version"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="publishType" column="publish_type"/>
+        <result property="totalNum" column="total_num"/>
+        <result property="createTime" column="create_time"/>
+        <result property="coinName" column="coin_name"/>
+    </resultMap>
+
+    <resultMap id="ListOrderResultDTO" type="com.blockchain.server.cct.dto.publishOrder.ListOrderResultDTO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="totalNum" column="total_num"/>
+        <result property="lastNum" column="last_num"/>
+        <result property="totalTurnover" column="total_turnover"/>
+        <result property="lastTurnover" column="last_turnover"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="publishType" column="publish_type"/>
+        <result property="orderType" column="order_type"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <select id="listOrder" parameterType="com.blockchain.server.cct.dto.publishOrder.ListOrderParamDTO"
+            resultType="com.blockchain.server.cct.dto.publishOrder.ListOrderResultDTO">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="param.userId != null and param.userId != ''">
+                user_id = #{param.userId}
+            </if>
+            <if test="param.coinName != null and param.coinName != ''">
+                AND coin_name = #{param.coinName}
+            </if>
+            <if test="param.unitName != null and param.unitName != ''">
+                AND unit_name = #{param.unitName}
+            </if>
+            <if test="param.unitPrice != null">
+                AND unit_price = #{param.unitPrice}
+            </if>
+            <if test="param.publishType != null and param.publishType != ''">
+                AND publish_type = #{param.publishType}
+            </if>
+            <if test="param.orderType != null and param.orderType != ''">
+                AND order_type = #{param.orderType}
+            </if>
+            <if test="param.orderStatus != null and param.orderStatus != ''">
+                AND order_status IN
+                <foreach collection="param.orderStatus" item="sitem" open="(" separator="," close=")">
+                    #{sitem}
+                </foreach>
+            </if>
+            <if test="param.beginTime != null and param.beginTime != ''">
+                AND DATE_FORMAT(#{param.beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="param.endTime != null and param.endTime != ''">
+                AND DATE_FORMAT(#{param.endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectOrderForUpdate" resultMap="PublishOrderMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE id = #{orderId}
+        FOR UPDATE
+    </select>
+
+</mapper>

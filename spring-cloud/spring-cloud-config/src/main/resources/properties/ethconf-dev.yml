@@ -1,0 +1,17 @@
+#以太坊连接配置
+ethconfig:
+  emptyAddress: "0x0000000000000000000000000000000000000000"
+  os: "windows" # ['unix','windows']
+  urlType: "rpc" #['rpc','ipc']
+#  url: "https://ropsten.infura.io/mew"
+  #url: "https://mainnet.infura.io/mew"
+  url: "https://mainnet.infura.io/v3/407027caf4fc4ff4b6ba33e80888c9b4"
+
+#以太坊钱包参数配置
+wallert:
+  eth: # ETH燃烧费用设置
+    gasPrice: 800000000000000
+    gasLimit: 21000
+  token:   # ETH代币燃烧费用设置
+    gasPrice: 160000000000
+    gasLimit: 60000

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.system.mapper.SystemRoleMapper">
+    <resultMap id="systemRoleMap" type="com.blockchain.server.system.dto.SystemRoleResultDto">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="ranking" column="ranking"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="tableName">pc_auth_system_role</sql>
+    <sql id="userRoleTableName">pc_auth_system_user_role</sql>
+
+    <select id="systemRoleList" resultMap="systemRoleMap">
+        SELECT id,name,code,ranking,status,create_time
+        FROM
+        <include refid="tableName"/>
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="name != null">
+                AND name like concat('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY ranking
+    </select>
+
+    <select id="userRoleList" resultMap="systemRoleMap">
+        SELECT id,name,code,ranking,status,create_time
+        FROM
+        <include refid="tableName"/>
+        <where>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        AND id IN (
+        <if test="id != null">
+            select role_id FROM
+            <include refid="userRoleTableName"/>
+            WHERE user_id = #{id}
+        </if>
+        )
+        </where>
+        ORDER BY ranking
+    </select>
+
+</mapper>

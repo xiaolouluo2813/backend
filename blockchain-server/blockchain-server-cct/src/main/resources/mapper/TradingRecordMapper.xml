@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.cct.mapper.TradingRecordMapper">
+    <resultMap id="TradingRecordMap" type="com.blockchain.server.cct.entity.TradingRecord">
+        <id property="id" column="id"/>
+        <result property="takerPrice" column="taker_price"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="tradingNum" column="trading_num"/>
+        <result property="takerId" column="taker_id"/>
+        <result property="coinName" column="coin_name"/>
+        <result property="makerPrice" column="maker_price"/>
+        <result property="makerId" column="maker_id"/>
+    </resultMap>
+
+    <resultMap id="ListRecordMap" type="com.blockchain.server.cct.dto.tradingRecord.ListRecordResultDTO">
+        <result property="id" column="id"/>
+        <result property="makerId" column="maker_id"/>
+        <result property="makerDetailId" column="maker_detail_id"/>
+        <result property="makerPrice" column="maker_price"/>
+        <result property="makerRealAmount" column="maker_real_amount"/>
+        <result property="makerCharge" column="maker_charge"/>
+        <result property="makerChargeRatio" column="maker_charge_ratio"/>
+        <result property="makerCoin" column="maker_coin"/>
+        <result property="takerId" column="taker_id"/>
+        <result property="takerDetailId" column="taker_detail_id"/>
+        <result property="takerPrice" column="taker_price"/>
+        <result property="takerRealAmount" column="taker_real_amount"/>
+        <result property="takerCharge" column="taker_charge"/>
+        <result property="takerChargeRatio" column="taker_charge_ratio"/>
+        <result property="takerCoin" column="taker_coin"/>
+        <result property="tradingNum" column="trading_num"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="listRecord" resultMap="ListRecordMap">
+        SELECT
+			tr.id,
+			tr.maker_id,
+			tr.maker_price,
+			tr.taker_id,
+			tr.taker_price,
+			tr.trading_num,
+			tr.create_time,
+			trm.id AS maker_detail_id,
+			trm.real_amount AS maker_real_amount,
+			trm.charge_ratio AS maker_charge_ratio,
+			trm.service_charge AS maker_charge,
+			trm.coin_name AS maker_coin,
+			trt.id AS taker_detail_id,
+			trt.real_amount AS taker_real_amount,
+			trt.charge_ratio AS taker_charge_ratio,
+			trt.service_charge AS taker_charge,
+			trt.coin_name AS taker_coin
+		FROM
+			app_cct_trading_record tr
+		LEFT JOIN app_cct_trading_detail trm ON trm.publish_id = tr.maker_id AND tr.id = trm.record_id
+        LEFT JOIN app_cct_trading_detail trt ON trt.publish_id = tr.taker_id AND tr.id = trt.record_id
+		WHERE
+			tr.maker_id = #{orderId} OR tr.taker_id = #{orderId}
+	    GROUP BY tr.id
+		ORDER BY tr.create_time DESC
+    </select>
+
+    <select id="selectById" resultMap="ListRecordMap">
+        SELECT
+			tr.id,
+			tr.maker_id,
+			tr.maker_price,
+			tr.taker_id,
+			tr.taker_price,
+			tr.trading_num,
+			tr.create_time,
+			trm.id AS maker_detail_id,
+			trm.real_amount AS maker_real_amount,
+			trm.charge_ratio AS maker_charge_ratio,
+			trm.service_charge AS maker_charge,
+			trm.coin_name AS maker_coin,
+			trt.id AS taker_detail_id,
+			trt.real_amount AS taker_real_amount,
+			trt.charge_ratio AS taker_charge_ratio,
+			trt.service_charge AS taker_charge,
+			trt.coin_name AS taker_coin
+		FROM
+			app_cct_trading_record tr
+		LEFT JOIN app_cct_trading_detail trm ON trm.publish_id = tr.maker_id AND tr.id = trm.record_id
+        LEFT JOIN app_cct_trading_detail trt ON trt.publish_id = tr.taker_id AND tr.id = trt.record_id
+		WHERE
+		    tr.id = #{id}
+    </select>
+
+</mapper>

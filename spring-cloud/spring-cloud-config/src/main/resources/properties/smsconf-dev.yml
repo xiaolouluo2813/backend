@@ -1,0 +1,8 @@
+feigesms:
+  closed: true
+  timeout: 5
+  URL: http://api.feige.ee/SmsService/Inter
+  Account: 15210275078
+  Pwd: 0c91c1866bee2aef05b7a544e
+  TemplateId_ZH_CN: 42431
+  SignId_ZH_CN: 41552

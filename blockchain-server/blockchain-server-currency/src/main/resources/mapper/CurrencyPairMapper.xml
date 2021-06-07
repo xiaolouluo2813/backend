@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.currency.mapper.CurrencyPairMapper">
+
+    <sql id="table">dapp_currency_pair</sql>
+
+    <resultMap id="CurrencyPairMap" type="com.blockchain.server.currency.entity.CurrencyPair">
+        <id property="currencyPair" column="currency_pair"/>
+        <result property="orderBy" column="order_by"/>
+        <result property="isHome" column="is_home"/>
+        <result property="isCct" column="is_cct"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="listCurrencyPair" resultMap="CurrencyPairMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="currencyPair != null and currencyPair != ''">
+                currency_pair = #{currencyPair}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY order_by ASC
+    </select>
+
+    <select id="selectByCurrencyPair" resultMap="CurrencyPairMap">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE currency_pair = #{currencyPair}
+    </select>
+
+</mapper>

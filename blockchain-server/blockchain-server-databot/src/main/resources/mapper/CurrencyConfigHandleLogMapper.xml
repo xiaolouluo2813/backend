@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blockchain.server.databot.mapper.CurrencyConfigHandleLogMapper">
+
+    <sql id="table">bot_currency_config_handle_log</sql>
+
+    <resultMap id="CurrencyConfigHandleLogMap" type="com.blockchain.server.databot.entity.CurrencyConfigHandleLog">
+        <id property="id" column="id"/>
+        <result property="currencyPair" column="currency_pair"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="afterKDayTotalAmount" column="after_k_day_total_amount"/>
+        <result property="beforeBuyPricePercent" column="before_buy_price_percent"/>
+        <result property="afterBuyPricePercent" column="after_buy_price_percent"/>
+        <result property="beforeKChangePercent" column="before_k_change_percent"/>
+        <result property="beforeKMaxChangePercent" column="before_k_max_change_percent"/>
+        <result property="afterKMaxChangePercent" column="after_k_max_change_percent"/>
+        <result property="beforeBuyTotalAmount" column="before_buy_total_amount"/>
+        <result property="beforeKDayTotalAmount" column="before_k_day_total_amount"/>
+        <result property="afterSellTotalAmount" column="after_sell_total_amount"/>
+        <result property="beforeSellPricePercent" column="before_sell_price_percent"/>
+        <result property="afterBuyTotalAmount" column="after_buy_total_amount"/>
+        <result property="afterKChangePercent" column="after_k_change_percent"/>
+        <result property="beforeSellTotalAmount" column="before_sell_total_amount"/>
+        <result property="afterSellPricePercent" column="after_sell_price_percent"/>
+        <result property="beforeKMaxPrice" column="before_k_max_price"/>
+        <result property="afterKMaxPrice" column="after_k_max_price"/>
+        <result property="beforeKMinPrice" column="before_k_min_price"/>
+        <result property="afterKMinPrice" column="after_k_min_price"/>
+        <result property="beforeBuyMaxPrice" column="before_buy_min_price"/>
+        <result property="afterBuyMaxPrice" column="after_buy_max_price"/>
+        <result property="beforeBuyMinPrice" column="before_buy_min_price"/>
+        <result property="afterBuyMinPrice" column="after_buy_min_price"/>
+        <result property="beforeSellMaxPrice" column="before_sell_min_price"/>
+        <result property="afterSellMaxPrice" column="after_sell_max_price"/>
+        <result property="beforeSellMinPrice" column="before_sell_min_price"/>
+        <result property="afterSellMinPrice" column="after_sell_min_price"/>
+        <result property="beforePriceType" column="before_price_type"/>
+        <result property="afterPriceType" column="after_price_type"/>
+    </resultMap>
+
+    <resultMap id="CurrencyConfigHandleLogDTOMap"
+               type="com.blockchain.server.databot.dto.currencyconfighandlelog.ListConfigHandleLogResultDTO">
+        <id property="id" column="id"/>
+        <result property="currencyPair" column="currency_pair"/>
+        <result property="handleType" column="handle_type"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="afterKDayTotalAmount" column="after_k_day_total_amount"/>
+        <result property="beforeBuyPricePercent" column="before_buy_price_percent"/>
+        <result property="afterBuyPricePercent" column="after_buy_price_percent"/>
+        <result property="beforeKChangePercent" column="before_k_change_percent"/>
+        <result property="beforeKMaxChangePercent" column="before_k_max_change_percent"/>
+        <result property="afterKMaxChangePercent" column="after_k_max_change_percent"/>
+        <result property="beforeBuyTotalAmount" column="before_buy_total_amount"/>
+        <result property="beforeKDayTotalAmount" column="before_k_day_total_amount"/>
+        <result property="afterSellTotalAmount" column="after_sell_total_amount"/>
+        <result property="beforeSellPricePercent" column="before_sell_price_percent"/>
+        <result property="afterBuyTotalAmount" column="after_buy_total_amount"/>
+        <result property="afterKChangePercent" column="after_k_change_percent"/>
+        <result property="beforeSellTotalAmount" column="before_sell_total_amount"/>
+        <result property="afterSellPricePercent" column="after_sell_price_percent"/>
+        <result property="beforeKMaxPrice" column="before_k_max_price"/>
+        <result property="afterKMaxPrice" column="after_k_max_price"/>
+        <result property="beforeKMinPrice" column="before_k_min_price"/>
+        <result property="afterKMinPrice" column="after_k_min_price"/>
+        <result property="beforeBuyMaxPrice" column="before_buy_min_price"/>
+        <result property="afterBuyMaxPrice" column="after_buy_max_price"/>
+        <result property="beforeBuyMinPrice" column="before_buy_min_price"/>
+        <result property="afterBuyMinPrice" column="after_buy_min_price"/>
+        <result property="beforeSellMaxPrice" column="before_sell_min_price"/>
+        <result property="afterSellMaxPrice" column="after_sell_max_price"/>
+        <result property="beforeSellMinPrice" column="before_sell_min_price"/>
+        <result property="afterSellMinPrice" column="after_sell_min_price"/>
+        <result property="beforePriceType" column="before_price_type"/>
+        <result property="afterPriceType" column="after_price_type"/>
+    </resultMap>
+
+    <select id="listConfigHandleLog" resultMap="CurrencyConfigHandleLogDTOMap">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            <if test="currencyPair != '' and currencyPair != null">
+                currency_pair = #{currencyPair}
+            </if>
+            <if test="handleType != '' and handleType != null">
+                AND handle_type = #{handleType}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                AND DATE_FORMAT(#{beginTime},'%Y-%m-%d') &lt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(#{endTime},'%Y-%m-%d') &gt;= DATE_FORMAT(create_time,'%Y-%m-%d')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>
